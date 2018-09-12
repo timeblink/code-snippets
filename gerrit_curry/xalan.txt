@@ -1,0 +1,5 @@
+
+java -cp \
+  ${xalan_dir}/serializer.jar:${xalan_dir}/xalan.jar:${xalan_dir}/xercesImpl.jar:${xalan_dir}/xml-apis.jar \
+  org.apache.xalan.xslt.Process \
+  -IN <xml file name> -XSL <xsl file name> -OUT <csv file name> -TEXT
