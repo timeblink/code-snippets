@@ -25,6 +25,17 @@ git filter-branch -f --tag-name-filter cat --prune-empty --subdirectory-filter L
 proprietary
 git filter-branch -f --tag-name-filter cat --prune-empty --subdirectory-filter LINUX/android/vendor/qcom/proprietary -- --all
 
+git拆库（保留log）
 git filter-branch -f \
   --tag-name-filter cat --prune-empty --tree-filter \
   'rm -rf llvm-rs ; rm -rf mm-audio ; rm -rf mm-camera ; rm -rf prebuilt_HY11' -- --all
+
+git filter-branch -f --tag-name-filter cat --prune-empty --subdirectory-filter <你要拆出来的库> -- --all
+
+例子：
+
+在proprietary库目录中，执行如下命令
+git filter-branch -f --tag-name-filter cat --prune-empty --subdirectory-filter modem_proc -- --all
+命令结束后，modem_proc库将变成一个独立的git库，并且保留之前的log信息。
+
+以上。
