@@ -1,0 +1,36 @@
+Jenkins Build With Pars
+
+## use jenkins client jar to build job
+java -jar jenkins-cli.jar -s <jenkins_url> build <job_name> --username <user_name> --password <passwod> -p <param>=<value>
+
+## use curl to build job
+## example this job hav 3 par
+## http://172.26.82.38:8080/view/TEST/job/TEST_RestAPI_Post
+## the post url is http://172.26.82.38:8080/view/TEST/job/TEST_RestAPI_Post/buildWithParameters
+## or http://172.26.82.38:8080/view/All/job/TEST_RestAPI_Post/buildWithParameters
+## and full command like (with user and passwod)
+curl -X POST http://172.26.82.38:8080/view/TEST/job/TEST_RestAPI_Post/buildWithParameters --user <user>:<passwod> --data-urlencode VERSION=11111
+## and you can write command with password , curl(POST) must tiptop you enter you passwod
+
+Jenkins v1.651.3 任务调用无法传参问题
+
+上游任务通过ENV这种key＝value配置文件调用下游任务时，
+如果下游任务没有明确定义ENV文件中的参数，下游任务将接收不到参数，
+后台会报：Skipped parameter `参数名` as it is undefined on `任务名`.
+解决办法 (2)：
+
+临时生效
+系统管理 ＝》 脚本命令运行＝》
+System.setProperty("hudson.model.ParametersAction.keepUndefinedParameters", "true")
+以下是备份
+System.setProperty("hudson.model.ParametersAction.keepUndefinedParameters", "true")
+System.setProperty("hudson.model.ParametersAction.keepUndefinedParameters", "true")
+System.setProperty("hudson.model.ParametersAction.keepUndefinedParameters", "true")
+System.setProperty("hudson.model.ParametersAction.keepUndefinedParameters", "true")
+
+或者加到启动脚本中，确保每次都生效
+编辑jenkins.xml 添加如下内容：<arguments>
+    -Xrs -Xmx256m -Dhudson.lifecycle=hudson.lifecycle.WindowsServiceLifecycle
+    -Dhudson.model.ParametersAction.keepUndefinedParameters=true 
+    -jar "%BASE%\jenkins.war" --httpPort=8080
+</arguments>
