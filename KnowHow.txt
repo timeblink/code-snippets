@@ -1,0 +1,50 @@
+linux命令巧用
+
+# 快速生成16进制
+v=$(echo “obase=16 ; ibase=10 ; 10 “ | bc)
+
+# lftp 命令遇到ssl限制时
+set  ftp:ssl-allow false
+
+#GNU go
+
+#启动，游戏过程中持续输出到sgf文件，使用中国规则，11乘11的棋盘
+gnugo -o `date +'%Y%m%d%H%M'`.sgf --chinese-rules --boardsize 11
+
+#启动，加载sgf文件，继续
+gnugo -l <filename>.sgf --mode ascii
+
+#webchat docker
+
+  sudo apt install docker.io 
+  docker run -d --name wechat \
+  --device /dev/snd \
+  -v /tmp/.X11-unix:/tmp/.X11-unix \
+  -v $HOME/TencentFiles:/TencentFiles \
+  -e DISPLAY=unix$DISPLAY \
+  -e XMODIFIERS=@im=fcitx \
+  -e QT_IM_MODULE=fcitx \
+  -e GTK_IM_MODULE=fcitx \
+  -e AUDIO_GID=`getent group audio | cut -d: -f3` \
+  -e VIDEO_GID=`getent group video | cut -d: -f3` \
+  -e GID=`id -g` \
+  -e UID=`id -u` \
+  bestwu/wechat
+
+X11备忘
+
+#远程命令
+
+#x11远程登陆备忘：
+#本机执行：xhost +
+#ssh 登陆到目标机（视个人爱好可选择添加“+x”参数）
+#登陆后设置X环境显示
+#csh环境下：setenv DISPLAY `who am i | cut -f2 -d"(" | cut -f1 -d")"`:0.0
+#bash环境下：export DISPLAY=`who am i | cut -f2 -d"(" | cut -f1 -d")"`:0.0
+
+#其他远程登陆命令备忘：
+Xnest -query
+su -X
+Xnest -geometry 1280x800 :1 & DISPLAY=:1 ssh -X ubuntu  gnome-session
+https://www.tweaking4all.com/software/linux-software/use-xrdp-remote-access-ubuntu-14-04/
+https://blog.csdn.net/gubenpeiyuan/article/details/82229520
