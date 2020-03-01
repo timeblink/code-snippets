@@ -1,0 +1,21 @@
+如何用curl更新redmine
+
+1、编写要更新的内容
+vim   3334.xml 
+<?xml version="1.0"?>
+<issue>
+  <notes><![CDATA[
+    test curl api 1
+    test curl api 2
+    ]]></notes>
+</issue>
+
+2、使用curl命令
+curl -v -H "Content-Type: application/xml" \
+   -X PUT --data-binary "@3334.xml" \
+   -u Thundersoft_lutx0528:Thundersoft_lutx0528 \
+   http://164.69.11.4/redmine/issues/3334.xml
+
+更多可参考：
+http://www.redmine.org/projects/redmine/wiki/Rest_api_with_curl
+
