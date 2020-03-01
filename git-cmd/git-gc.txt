@@ -1,0 +1,7 @@
+原理实现1：
+git对象剪裁，剪裁所有不可达对象：git  prune
+原理实现2：
+用一系列底层命令实现git-gc：
+git  fsck  —lost-found
+git  reflow  expire  —expire-unreachable=0  —all
+git  prune  —expire 0
