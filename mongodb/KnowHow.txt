@@ -1,0 +1,99 @@
+MongoDB::查询
+
+db.changes.find( {
+	branch:"LP/monaka/public/develop" } )
+db.changes.find( {
+	branch:"LP/monaka/public/develop",
+	"owner.email":"lutx0528@thundersoft.com" } )
+
+MongoDB::管道
+
+使用例子（python代码）
+
+from pymongo import MongoClient
+
+pipeline = []
+
+pipeline.append({ "$project": {
+  "feature_id": 1,
+  "feature_name": 1,
+  "desc_real": 1,
+  "desc_func": 1,
+  "desc_kpi": 1,
+  "module": 1,
+  "project_list": { "$ifNull": [ "$project_list", [] ] }
+  }})
+pipeline.append({ "$project": { 
+      "feature_id": 1,
+      "feature_name": 1,
+      "desc_real": 1,
+      "desc_func": 1,
+      "desc_kpi": 1,
+      "module": 1,
+      "numberOfProject": { "$size": "$project_list" }
+  }})
+pipeline.append({ "$sort": {
+    "numberOfProject": -1,
+    "_id": -1
+  }})
+pipeline.append({ "$limit": 5})
+
+client = MongoClient('mongodb://192.168.11.127:27019')
+
+mdb = client.get_database('origin')['feature']
+
+result = map(lambda x:x,mdb.aggregate(pipeline))
+
+map(lambda x:"{feature_id} {feature_name}".format(**x),result)
+
+
+MongoDB::合计
+
+针对某个数据结构的举例（之一）
+
+{
+"_id" : ObjectId("58b7e02420202c51119e9bb1"),
+"build_number" : "35648",
+"build_user" : "zhangtz0707",
+"start_at" : "2017-03-02 17:01:17",
+"history" : [
+  {"cherry_{step}" : "2017-03-02 17:01:09"},
+  {"cherry_end" : "2017-03-02 17:01:09"},
+  {"verify_start" : "2017-03-02 17:32:08"},
+  {"verify_end" : "2017-03-02 17:57:03"}
+],
+"parameters" : {
+  "gerritid" : [138218],
+  "custom_module" : "PrivacyModeSettings",
+  "get_rom" : "false",
+  "branch" : "NU/latte-1/public/develop",
+  "package_type" : "userdebug"
+},
+"r_node_name" : "normal_cd_7_180",
+"endof" : "2017-03-02 18:00:24",
+"endby" : "ok"
+}
+
+db.queue.count({endof:{$exists:1},"endby":"ok"})
+db.queue.count({endof:{$exists:1},"endby":"fail"})
+db.queue.count({endof:{$exists:1},endby:"fail",history:{$size:0}})	
+db.queue.count({endof:{$exists:1},endby:"fail",history:{$size:1}})
+db.queue.count({endof:{$exists:1},endby:"fail",history:{$size:2}},{_id:0,start_at:1,endof:1,history:1,build_number:1})
+#下面这句：
+#数组中第0个元素存在，且数组中第1个元素不存在，也就是数组个数为1的
+db.queue.count({endof:{$exists:1},endby:"fail","history.0":{$exists:1},"history.1":{$exists:0}})
+#下面这句：
+#数组中第1个元素存在，且数组中第2个元素不存在，也就是数组个数为2的
+db.queue.count({endof:{$exists:1},endby:"fail","history.1":{$exists:1},"history.2":{$exists:0}})
+
+MongoDB::聚合
+
+db.changes.aggregate([{"$group":{_id:"$branch",count:{$sum:1}}}]);
+db.changes.aggregate([{"$group":{_id:"$branch",count:{$sum:1}}}]).forEach(function(doc){print(doc._id,doc.count)});
+实现select count(*) from table  group by branch;
+
+MongoDB::修改
+
+db.config.updateOne( { 
+	"gerrit_uri":"ssh://Thundersoft_lutx0528@164.69.11.22:29418" } , 
+	{ $set: { "resume_value":null } } );
